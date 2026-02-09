@@ -4,118 +4,202 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unit Converter</title>
+
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f8f8;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            min-height: 100vh;
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
         }
+
         .converter {
-            background-color: white;
+            width: 420px;
+            background: rgba(255, 255, 255, 0.95);
             padding: 30px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            width: 400px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
             text-align: center;
+            animation: fadeIn 0.6s ease-in-out;
         }
-        input, select, button {
+
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            margin: 12px 0 6px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input,
+        select {
             width: 100%;
-            margin: 10px 0;
-            padding: 10px;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
             font-size: 1rem;
+            transition: border 0.3s, box-shadow 0.3s;
         }
-        .result {
-            margin-top: 15px;
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            font-size: 1.1rem;
             font-weight: bold;
-            color: #007bff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #4b0082;
+            min-height: 28px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .converter {
+                width: 90%;
+            }
         }
     </style>
 </head>
+
 <body>
-    <div class="converter">
-        <h1>Unit Converter</h1>
-        <label for="category">Choose Category:</label>
-        <select id="category" onchange="updateUnits()">
-            <option value="length">Length</option>
-            <option value="weight">Weight</option>
-            <option value="temperature">Temperature</option>
-        </select>
 
-        <input type="number" id="value" placeholder="Enter value" />
+<div class="converter">
+    <h1>🔄 Unit Converter</h1>
 
-        <label for="fromUnit">From:</label>
-        <select id="fromUnit"></select>
+    <label for="category">Choose Category</label>
+    <select id="category" onchange="updateUnits()">
+        <option value="length">Length</option>
+        <option value="weight">Weight</option>
+        <option value="temperature">Temperature</option>
+    </select>
 
-        <label for="toUnit">To:</label>
-        <select id="toUnit"></select>
+    <label for="value">Enter Value</label>
+    <input type="number" id="value" placeholder="Enter value" step="any">
 
-        <button onclick="convert()">Convert</button>
+    <label for="fromUnit">From</label>
+    <select id="fromUnit"></select>
 
-        <div class="result" id="result"></div>
-    </div>
+    <label for="toUnit">To</label>
+    <select id="toUnit"></select>
 
-    <script>
-        const units = {
-            length: ["Meters", "Kilometers", "Miles", "Feet"],
-            weight: ["Kilograms", "Grams", "Pounds", "Ounces"],
-            temperature: ["Celsius", "Fahrenheit", "Kelvin"]
-        };
+    <button onclick="convert()">Convert</button>
 
-        const conversionRates = {
-            length: { Meters: 1, Kilometers: 0.001, Miles: 0.000621371, Feet: 3.28084 },
-            weight: { Kilograms: 1, Grams: 1000, Pounds: 2.20462, Ounces: 35.274 }
-        };
+    <div class="result" id="result"></div>
+</div>
 
-        function updateUnits() {
-            const category = document.getElementById("category").value;
-            const fromSelect = document.getElementById("fromUnit");
-            const toSelect = document.getElementById("toUnit");
+<script>
+    const units = {
+        length: ["Meters", "Kilometers", "Miles", "Feet"],
+        weight: ["Kilograms", "Grams", "Pounds", "Ounces"],
+        temperature: ["Celsius", "Fahrenheit", "Kelvin"]
+    };
 
-            fromSelect.innerHTML = "";
-            toSelect.innerHTML = "";
+    const conversionRates = {
+        length: { Meters: 1, Kilometers: 0.001, Miles: 0.000621371, Feet: 3.28084 },
+        weight: { Kilograms: 1, Grams: 1000, Pounds: 2.20462, Ounces: 35.274 }
+    };
 
-            units[category].forEach(unit => {
-                fromSelect.innerHTML += `<option value="${unit}">${unit}</option>`;
-                toSelect.innerHTML += `<option value="${unit}">${unit}</option>`;
-            });
+    function updateUnits() {
+        const category = document.getElementById("category").value;
+        const fromUnit = document.getElementById("fromUnit");
+        const toUnit = document.getElementById("toUnit");
+
+        fromUnit.innerHTML = "";
+        toUnit.innerHTML = "";
+
+        units[category].forEach(unit => {
+            fromUnit.innerHTML += `<option value="${unit}">${unit}</option>`;
+            toUnit.innerHTML += `<option value="${unit}">${unit}</option>`;
+        });
+    }
+
+    function convertTemperature(value, from, to) {
+        if (from === to) return value;
+
+        if (from === "Celsius")
+            return to === "Fahrenheit" ? value * 9/5 + 32 : value + 273.15;
+
+        if (from === "Fahrenheit")
+            return to === "Celsius"
+                ? (value - 32) * 5/9
+                : (value - 32) * 5/9 + 273.15;
+
+        if (from === "Kelvin")
+            return to === "Celsius"
+                ? value - 273.15
+                : (value - 273.15) * 9/5 + 32;
+    }
+
+    function convert() {
+        const category = document.getElementById("category").value;
+        const value = parseFloat(document.getElementById("value").value);
+        const from = document.getElementById("fromUnit").value;
+        const to = document.getElementById("toUnit").value;
+        const resultDiv = document.getElementById("result");
+
+        if (isNaN(value)) {
+            resultDiv.textContent = "⚠ Please enter a valid number";
+            return;
         }
 
-        function convertTemperature(value, from, to) {
-            if (from === to) return value;
-            if (from === 'Celsius') return to === 'Fahrenheit' ? (value * 9/5 + 32) : (value + 273.15);
-            if (from === 'Fahrenheit') return to === 'Celsius' ? ((value - 32) * 5/9) : ((value - 32) * 5/9 + 273.15);
-            if (from === 'Kelvin') return to === 'Celsius' ? (value - 273.15) : ((value - 273.15) * 9/5 + 32);
+        let result;
+        if (category === "temperature") {
+            result = convertTemperature(value, from, to);
+        } else {
+            const baseValue = value / conversionRates[category][from];
+            result = baseValue * conversionRates[category][to];
         }
 
-        function convert() {
-            const category = document.getElementById("category").value;
-            const value = parseFloat(document.getElementById("value").value);
-            const fromUnit = document.getElementById("fromUnit").value;
-            const toUnit = document.getElementById("toUnit").value;
-            const resultDiv = document.getElementById("result");
+        resultDiv.textContent = `${value} ${from} = ${result.toFixed(2)} ${to}`;
+    }
 
-            if (isNaN(value)) {
-                resultDiv.innerText = "Please enter a valid number.";
-                return;
-            }
+    updateUnits();
+</script>
 
-            let result;
-            if (category === "temperature") {
-                result = convertTemperature(value, fromUnit, toUnit);
-            } else {
-                const baseValue = value / conversionRates[category][fromUnit];
-                result = baseValue * conversionRates[category][toUnit];
-            }
-
-            resultDiv.innerText = `${value} ${fromUnit} = ${result.toFixed(2)} ${toUnit}`;
-        }
-
-        // Initialize with default units
-        updateUnits();
-    </script>
 </body>
 </html>
